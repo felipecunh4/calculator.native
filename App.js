@@ -4,16 +4,44 @@ import {SafeAreaView, StyleSheet, ScrollView, View} from 'react-native';
 import Button from './scr/components/Button';
 import Display from './scr/components/Display';
 
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0,
+};
+
 const App = () => {
-  const [displayValue, setDisplayValue] = useState(0);
-  // const [operation, setOperation] = useState('');
+  const [displayValue, setDisplayValue] = useState(initialState.displayValue);
+  const [operationValue, setOperationValue] = useState('');
+  const [clearDisplay, setClearDisplay] = useState(initialState.clearDisplay);
+  const [values, setValues] = useState(initialState.values);
+  const [current, setCurrent] = useState(initialState.current);
 
   const addDigit = (n) => {
-    setDisplayValue(n);
+    if (n === '.' && displayValue.includes('.')) return;
+
+    const clear = displayValue == '0' || clearDisplay;
+    const currentValue = clear ? '' : displayValue;
+    const newDisplayValue = currentValue + n;
+    setDisplayValue(newDisplayValue);
+    setClearDisplay(false);
+
+    if (n !== '.') {
+      const newValue = parseFloat(displayValue);
+      const valuesInArray = [...values];
+      valuesInArray[current] = newValue;
+      setValues(valuesInArray);
+    }
   };
 
   const clearMemory = () => {
-    setDisplayValue(0);
+    setDisplayValue(initialState.displayValue);
+    setOperationValue(initialState.operation);
+    setClearDisplay(initialState.clearDisplay);
+    setValues(initialState.values);
+    setCurrent(initialState.current);
   };
 
   const setOperation = (operation) => {
